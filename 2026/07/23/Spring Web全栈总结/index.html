@@ -1,0 +1,718 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Spring Web全栈总结 | Mikaela</title><meta name="author" content="Mikaela"><meta name="copyright" content="Mikaela"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Spring Web 全栈知识点归纳一、Maven 核心知识点1. 项目自身坐标（定义本项目）Maven 通过坐标唯一标识一个项目，由三要素组成：    标签 说明    &lt;groupId&gt; 组织&#x2F;公司   &lt;artifactId&gt; 项目名称   &lt;version&gt; 版本号   123&lt;groupId&gt;组织&#x2F;公司&lt;&#x2F;groupId&amp;g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Web全栈总结">
+<meta property="og:url" content="http://example.com/2026/07/23/Spring%20Web%E5%85%A8%E6%A0%88%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Mikaela">
+<meta property="og:description" content="Spring Web 全栈知识点归纳一、Maven 核心知识点1. 项目自身坐标（定义本项目）Maven 通过坐标唯一标识一个项目，由三要素组成：    标签 说明    &lt;groupId&gt; 组织&#x2F;公司   &lt;artifactId&gt; 项目名称   &lt;version&gt; 版本号   123&lt;groupId&gt;组织&#x2F;公司&lt;&#x2F;groupId&amp;g">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.jpg">
+<meta property="article:published_time" content="2026-07-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-04T16:23:17.768Z">
+<meta property="article:author" content="Mikaela">
+<meta property="article:tag" content="软件开发,网络安全,技术笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Spring Web全栈总结",
+  "url": "http://example.com/2026/07/23/Spring%20Web%E5%85%A8%E6%A0%88%E6%80%BB%E7%BB%93/",
+  "image": "http://example.com/img/avatar.jpg",
+  "datePublished": "2026-07-22T16:00:00.000Z",
+  "dateModified": "2026-08-04T16:23:17.768Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Mikaela",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/07/23/Spring%20Web%E5%85%A8%E6%A0%88%E6%80%BB%E7%BB%93/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring Web全栈总结',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/img/bg.jpg);"></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Mikaela</span></a><a class="nav-page-title" href="/"><span class="site-name">Spring Web全栈总结</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">Spring Web全栈总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-07-22T16:00:00.000Z" title="发表于 2026-07-23 00:00:00">2026-07-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-04T16:23:17.768Z" title="更新于 2026-08-05 00:23:17">2026-08-05</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Spring-Web-全栈知识点归纳"><a href="#Spring-Web-全栈知识点归纳" class="headerlink" title="Spring Web 全栈知识点归纳"></a>Spring Web 全栈知识点归纳</h1><h2 id="一、Maven-核心知识点"><a href="#一、Maven-核心知识点" class="headerlink" title="一、Maven 核心知识点"></a>一、Maven 核心知识点</h2><h3 id="1-项目自身坐标（定义本项目）"><a href="#1-项目自身坐标（定义本项目）" class="headerlink" title="1. 项目自身坐标（定义本项目）"></a>1. 项目自身坐标（定义本项目）</h3><p>Maven 通过坐标唯一标识一个项目，由三要素组成：</p>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&lt;groupId&gt;</code></td>
+<td>组织&#x2F;公司</td>
+</tr>
+<tr>
+<td><code>&lt;artifactId&gt;</code></td>
+<td>项目名称</td>
+</tr>
+<tr>
+<td><code>&lt;version&gt;</code></td>
+<td>版本号</td>
+</tr>
+</tbody></table>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>组织/公司<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>项目名称<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span>版本号<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>version 区分</strong>：<code>SNAPSHOT</code>（快照版）、正式发行版</li>
+<li><strong>打包方式 <code>&lt;packaging&gt;</code></strong>：<code>jar</code>（默认）、<code>war</code></li>
+</ul>
+<h3 id="2-properties-属性标签"><a href="#2-properties-属性标签" class="headerlink" title="2. properties 属性标签"></a>2. properties 属性标签</h3><p>统一定义版本号、编码格式，多处复用，方便统一修改。</p>
+<h3 id="3-dependencies-依赖管理"><a href="#3-dependencies-依赖管理" class="headerlink" title="3. dependencies 依赖管理"></a>3. dependencies 依赖管理</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span><span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span><span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span><span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>一个 pom 只能有<strong>一个</strong> <code>dependencies</code>，内部多个 <code>dependency</code></li>
+<li><strong>查找顺序</strong>：本地 <code>.m2</code> 仓库 → 远程中央仓库下载</li>
+<li><strong>仓库搜索</strong>：阿里云 maven 镜像（国内推荐）</li>
+</ul>
+<p><strong>术语</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>二方库</td>
+<td>团队内部代码包</td>
+</tr>
+<tr>
+<td>三方库</td>
+<td>外部开源组件</td>
+</tr>
+<tr>
+<td>传递依赖</td>
+<td>A 依赖 B，B 依赖 C → A 自动持有 C 依赖</td>
+</tr>
+</tbody></table>
+<h3 id="4-build-plugins-插件体系"><a href="#4-build-plugins-插件体系" class="headerlink" title="4. build &#x2F; plugins 插件体系"></a>4. build &#x2F; plugins 插件体系</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span><span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span><span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span><span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>插件本质也是 jar 包，用来增强 Maven 功能（编译、打包等）</li>
+<li>示例：<code>maven-compiler-plugin</code> 负责编译 Java 代码</li>
+</ul>
+<h3 id="5-基础补充"><a href="#5-基础补充" class="headerlink" title="5. 基础补充"></a>5. 基础补充</h3><ul>
+<li>标签全部为 XML 格式，严格区分大小写、闭合标签</li>
+<li>本地仓库路径：用户目录下 <code>.m2</code></li>
+<li><strong>依赖坐标</strong> &#x3D; <code>groupId</code> + <code>artifactId</code> + <code>version</code>（唯一标识 jar 包）</li>
+</ul>
+<hr>
+<h2 id="二、Spring-HelloWorld-注解开发"><a href="#二、Spring-HelloWorld-注解开发" class="headerlink" title="二、Spring HelloWorld 注解开发"></a>二、Spring HelloWorld 注解开发</h2><h3 id="1-Bean-概念"><a href="#1-Bean-概念" class="headerlink" title="1. Bean 概念"></a>1. Bean 概念</h3><ul>
+<li><strong>Bean</strong>：Spring IoC 容器管理的 Java 对象</li>
+<li><strong>开发模式</strong>：接口 + 实现类，直接从容器拿 Bean，不用自己 <code>new</code> 实现类</li>
+<li><strong>容器顶层接口</strong>：<code>ApplicationContext</code></li>
+<li><strong>注解版 IoC 容器实现类</strong>：<code>AnnotationConfigApplicationContext</code></li>
+</ul>
+<h3 id="2-Spring-核心依赖"><a href="#2-Spring-核心依赖" class="headerlink" title="2. Spring 核心依赖"></a>2. Spring 核心依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-context<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.2.6.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>💡 <strong>理念</strong>：Spring 提倡<strong>面向接口编程</strong>，业务代码通常由接口 + 实现类组成。</p>
+<h3 id="3-核心注解-ComponentScan"><a href="#3-核心注解-ComponentScan" class="headerlink" title="3. 核心注解 @ComponentScan"></a>3. 核心注解 @ComponentScan</h3><p><strong>作用</strong>：自动扫描 Bean</p>
+<ul>
+<li>写在 Spring 配置类上面</li>
+<li>Spring 自动扫描当前配置类所在包及其全部子包</li>
+<li>识别带有 <code>@Service</code>、<code>@Component</code>、<code>@Repository</code>、<code>@Controller</code> 标记的类</li>
+<li>自动实例化对象存入 IoC 容器</li>
+</ul>
+<p>⚠ <strong>注意</strong>：<code>@ComponentScan</code> 不写，Spring 不会自动创建 <code>@Service</code> 标记的类。</p>
+<p><strong>优势</strong>：开发人员无需手动 <code>new</code> 对象，交给 Spring 统一管理。</p>
+<h3 id="4-四个-Bean-注解"><a href="#4-四个-Bean-注解" class="headerlink" title="4. 四个 Bean 注解"></a>4. 四个 Bean 注解</h3><table>
+<thead>
+<tr>
+<th>注解</th>
+<th>使用位置</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@Component</code></td>
+<td>普通类</td>
+<td>通用注解，另外 3 个都是基于它扩展</td>
+</tr>
+<tr>
+<td><code>@Service</code></td>
+<td>业务层实现类</td>
+<td>业务 service 层使用</td>
+</tr>
+<tr>
+<td><code>@Controller</code></td>
+<td>web 控制器类</td>
+<td>web 层用</td>
+</tr>
+<tr>
+<td><code>@Repository</code></td>
+<td>数据库操作类</td>
+<td>持久层用</td>
+</tr>
+</tbody></table>
+<p>⚠ <strong>注意</strong>：写在类上，接口不加注解！</p>
+<p><strong>@Service 使用规范</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>标记位置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>✅ service 实现类（SongServiceImpl）</td>
+<td>加在实现类上</td>
+</tr>
+<tr>
+<td>❌ service 接口</td>
+<td>不要加在接口上</td>
+</tr>
+<tr>
+<td>❌ model 实体类</td>
+<td>不要加在实体类上</td>
+</tr>
+</tbody></table>
+<h3 id="5-启动-IoC-容器（2-种构造方法）"><a href="#5-启动-IoC-容器（2-种构造方法）" class="headerlink" title="5. 启动 IoC 容器（2 种构造方法）"></a>5. 启动 IoC 容器（2 种构造方法）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方式一：传入包名字符串，直接扫描这个包下所有子包</span></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(<span class="string">&quot;fm.douban&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式二：传入配置类 Class，配置类上加 @ComponentScan 指定扫描包</span></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(Application.class);</span><br></pre></td></tr></table></figure>
+
+<p>容器启动后：加载资源 → 实例化加了 Bean 注解的 Java 对象，存入容器。</p>
+<h3 id="6-获取-Bean"><a href="#6-获取-Bean" class="headerlink" title="6. 获取 Bean"></a>6. 获取 Bean</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 传接口.class，Spring 自动找实现类</span></span><br><span class="line"><span class="type">MessageService</span> <span class="variable">msgService</span> <span class="operator">=</span> context.getBean(MessageService.class);</span><br></pre></td></tr></table></figure>
+
+<p><strong>对比传统写法</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 传统方式：手动 new，硬编码耦合</span></span><br><span class="line"><span class="type">MessageService</span> <span class="variable">service</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MessageService</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Spring 方式：向容器索取实例，由容器创建管理对象</span></span><br><span class="line"><span class="type">MessageService</span> <span class="variable">service</span> <span class="operator">=</span> context.getBean(MessageService.class);</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-完整运行流程"><a href="#7-完整运行流程" class="headerlink" title="7. 完整运行流程"></a>7. 完整运行流程</h3><ol>
+<li>运行 <code>main</code> 方法</li>
+<li>创建 Spring 上下文，读取配置类上 <code>@ComponentScan</code></li>
+<li>根据包路径扫描，找到标记 <code>@Service</code> 的 <code>MessageService</code> 实现类</li>
+<li>Spring 自动实例化对象，存入 IoC 容器</li>
+<li><code>getBean()</code> 从容器取出实例（传接口，自动找实现类）</li>
+<li>调用 <code>getMessage()</code> 方法，打印输出</li>
+</ol>
+<h3 id="8-必背易错点"><a href="#8-必背易错点" class="headerlink" title="8. 必背易错点"></a>8. 必背易错点</h3><table>
+<thead>
+<tr>
+<th>易错点</th>
+<th>正确做法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>接口加 <code>@Service</code></td>
+<td>✅ 打在实现类上，不要加在接口上</td>
+</tr>
+<tr>
+<td><code>getBean</code> 传实现类</td>
+<td>✅ 传接口 <code>.class</code>，Spring 自动找实现类</td>
+</tr>
+<tr>
+<td>不写 <code>@ComponentScan</code></td>
+<td>✅ 必须配置，否则 Spring 找不到带注解的类，不会创建 Bean</td>
+</tr>
+<tr>
+<td>四个注解功能是否不同</td>
+<td>底层都是 <code>@Component</code>，只是语义区分，功能一样</td>
+</tr>
+<tr>
+<td>直接 <code>getBean</code> 不启动容器</td>
+<td>✅ 一定要先启动 IoC 容器，才能 <code>getBean</code> 拿对象</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="三、Java-注解（Annotation）"><a href="#三、Java-注解（Annotation）" class="headerlink" title="三、Java 注解（Annotation）"></a>三、Java 注解（Annotation）</h2><h3 id="1-元注解（定义注解的注解）"><a href="#1-元注解（定义注解的注解）" class="headerlink" title="1. 元注解（定义注解的注解）"></a>1. 元注解（定义注解的注解）</h3><h4 id="Target"><a href="#Target" class="headerlink" title="@Target"></a>@Target</h4><p>限制注解标注位置，取值来自 <code>ElementType</code> 枚举：</p>
+<table>
+<thead>
+<tr>
+<th>枚举值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TYPE</code></td>
+<td>类、接口、枚举</td>
+</tr>
+<tr>
+<td><code>FIELD</code></td>
+<td>成员变量</td>
+</tr>
+<tr>
+<td><code>METHOD</code></td>
+<td>方法</td>
+</tr>
+<tr>
+<td><code>PARAMETER</code></td>
+<td>方法参数</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE, ElementType.METHOD&#125;)</span>  <span class="comment">// 支持多位置</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Retention"><a href="#Retention" class="headerlink" title="@Retention"></a>@Retention</h4><p>定义注解生命周期，取值 <code>RetentionPolicy</code>：</p>
+<table>
+<thead>
+<tr>
+<th>枚举值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SOURCE</code></td>
+<td>仅源码有效，编译消失</td>
+</tr>
+<tr>
+<td><code>CLASS</code></td>
+<td>存入 class 文件，运行失效（默认）</td>
+</tr>
+<tr>
+<td><code>RUNTIME</code></td>
+<td>运行时有效，<strong>自定义注解必写</strong> ⚠</td>
+</tr>
+</tbody></table>
+<h4 id="Documented"><a href="#Documented" class="headerlink" title="@Documented"></a>@Documented</h4><p>生成 JavaDoc 文档时保留注解信息。</p>
+<h4 id="interface"><a href="#interface" class="headerlink" title="@interface"></a>@interface</h4><p>自定义注解固定开头语法，代表这是注解。</p>
+<p><strong>注解属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>value</code></td>
+<td>默认属性，可简写</td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td>设置默认值</td>
+</tr>
+<tr>
+<td><code>@AliasFor</code></td>
+<td>设置属性别名</td>
+</tr>
+</tbody></table>
+<h3 id="2-万能标准模板（直接默写）💡"><a href="#2-万能标准模板（直接默写）💡" class="headerlink" title="2. 万能标准模板（直接默写）💡"></a>2. 万能标准模板（直接默写）💡</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> 自定义注解名 &#123;</span><br><span class="line">    String <span class="title function_">value</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-补充特性"><a href="#3-补充特性" class="headerlink" title="3. 补充特性"></a>3. 补充特性</h3><ul>
+<li>注解可嵌套组合使用</li>
+<li>注解需要导包</li>
+<li><strong>Spring 的 <code>@Service</code>、<code>@Component</code></strong> 就是用这套注解机制实现 Bean 扫描（与第二节 <code>@ComponentScan</code> 关联）</li>
+</ul>
+<hr>
+<h2 id="四、Spring-依赖注入（-Service-Autowired）"><a href="#四、Spring-依赖注入（-Service-Autowired）" class="headerlink" title="四、Spring 依赖注入（@Service + @Autowired）"></a>四、Spring 依赖注入（@Service + @Autowired）</h2><h3 id="1-两个核心注解"><a href="#1-两个核心注解" class="headerlink" title="1. 两个核心注解"></a>1. 两个核心注解</h3><table>
+<thead>
+<tr>
+<th>注解</th>
+<th>作用</th>
+<th>位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@Service</code></td>
+<td>把类标记为 Spring 的 Bean，交给 IoC 容器创建管理</td>
+<td>服务实现类上</td>
+</tr>
+<tr>
+<td><code>@Autowired</code></td>
+<td>自动从 Spring 容器中找到对应 Bean，赋值给成员变量</td>
+<td>成员变量上</td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>@Autowired</code> 完整包：<code>org.springframework.beans.factory.annotation.Autowired</code></li>
+<li>没有 <code>@Service</code>，这个类不会变成 Bean，就不能被注入</li>
+</ul>
+<h3 id="2-业务场景"><a href="#2-业务场景" class="headerlink" title="2. 业务场景"></a>2. 业务场景</h3><p><code>SubjectServiceImpl</code>（专辑服务）需要使用 <code>SongService</code>（歌曲服务）。</p>
+<p><strong>老式写法（不使用依赖注入）</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SubjectService</span> <span class="variable">subjectService</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SubjectServiceImpl</span>();</span><br><span class="line"><span class="type">SongService</span> <span class="variable">songService</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SongServiceImpl</span>();</span><br><span class="line"><span class="comment">// 手动给成员变量赋值</span></span><br><span class="line">subjectService.setSongService(songService);</span><br></pre></td></tr></table></figure>
+
+<p>缺点：依赖多的时候，要写大量 <code>new</code>、<code>set</code> 代码，麻烦容易出错。</p>
+<h3 id="3-✅-Spring-依赖注入写法"><a href="#3-✅-Spring-依赖注入写法" class="headerlink" title="3. ✅ Spring 依赖注入写法"></a>3. ✅ Spring 依赖注入写法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span>  <span class="comment">// 当前类本身要成为 Bean</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SubjectServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">SubjectService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span>  <span class="comment">// Spring 自动注入容器里的 SongService Bean</span></span><br><span class="line">    <span class="keyword">private</span> SongService songService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Map&lt;String, Subject&gt; subjectMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">// 初始化专辑模拟数据</span></span><br><span class="line">        <span class="type">Subject</span> <span class="variable">subject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Subject</span>();</span><br><span class="line">        subject.setId(<span class="string">&quot;s001&quot;</span>);</span><br><span class="line">        subjectMap.put(subject.getId(), subject);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Subject <span class="title function_">get</span><span class="params">(String subjectId)</span> &#123;</span><br><span class="line">        <span class="type">Subject</span> <span class="variable">subject</span> <span class="operator">=</span> subjectMap.get(subjectId);</span><br><span class="line">        <span class="comment">// 直接使用已经注入好的 songService 对象，不用自己 new</span></span><br><span class="line">        List&lt;Song&gt; songs = songService.list(subjectId);</span><br><span class="line">        subject.setSongs(songs);</span><br><span class="line">        <span class="keyword">return</span> subject;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-⚠-两个缺一不可的条件"><a href="#4-⚠-两个缺一不可的条件" class="headerlink" title="4. ⚠ 两个缺一不可的条件"></a>4. ⚠ 两个缺一不可的条件</h3><table>
+<thead>
+<tr>
+<th>条件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>被注入的类（SongServiceImpl）加 <code>@Service</code></td>
+<td>成为 Spring Bean</td>
+</tr>
+<tr>
+<td>需要使用它的地方，成员变量加 <code>@Autowired</code></td>
+<td>触发自动注入</td>
+</tr>
+</tbody></table>
+<p>少任意一个，注入失败，变量为 <code>null</code>，调用方法报空指针。</p>
+<h3 id="5-执行流程"><a href="#5-执行流程" class="headerlink" title="5. 执行流程"></a>5. 执行流程</h3><ol>
+<li>Spring 容器启动，<code>@ComponentScan</code> 扫描包</li>
+<li>Spring 把所有带 <code>@Service</code> 的类实例化成 Bean 放入容器</li>
+<li>遇到 <code>@Autowired</code>，去容器找对应接口的 Bean，自动赋值给成员变量</li>
+<li>业务代码直接使用该变量，不需要手写 <code>new</code>、<code>set</code></li>
+</ol>
+<h3 id="6-接口小重点"><a href="#6-接口小重点" class="headerlink" title="6. 接口小重点"></a>6. 接口小重点</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> SongService songService;</span><br></pre></td></tr></table></figure>
+
+<p>变量写<strong>接口类型</strong> <code>SongService</code>，Spring 自动去找它带 <code>@Service</code> 的实现类。</p>
+<h3 id="7-易错坑"><a href="#7-易错坑" class="headerlink" title="7. 易错坑"></a>7. 易错坑</h3><table>
+<thead>
+<tr>
+<th>易错点</th>
+<th>正确做法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@Autowired</code> 加了，但实现类没写 <code>@Service</code></td>
+<td>✅ 实现类必须加 <code>@Service</code>，否则注入失败</td>
+</tr>
+<tr>
+<td>接口上写 <code>@Service</code></td>
+<td>✅ 注解打在实现类，不写在接口</td>
+</tr>
+<tr>
+<td>自己 <code>new</code> 实现类对象</td>
+<td>✅ 必须启动 Spring IoC 容器，依赖注入才生效；自己 <code>new</code>，<code>@Autowired</code> 不会工作</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="五、Spring-Resource-资源读取"><a href="#五、Spring-Resource-资源读取" class="headerlink" title="五、Spring Resource 资源读取"></a>五、Spring Resource 资源读取</h2><h3 id="1-三种文件位置"><a href="#1-三种文件位置" class="headerlink" title="1. 三种文件位置"></a>1. 三种文件位置</h3><table>
+<thead>
+<tr>
+<th>位置</th>
+<th>示例</th>
+<th>读取方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>电脑磁盘绝对路径</td>
+<td><code>d:/mywork/a.doc</code></td>
+<td>直接用 <code>File</code> 读取</td>
+</tr>
+<tr>
+<td>工程根目录</td>
+<td><code>mywork/toutiao.png</code></td>
+<td>直接用 <code>File</code> 读取</td>
+</tr>
+<tr>
+<td><code>src/main/resources</code> 下</td>
+<td><code>data.json</code></td>
+<td>⚠ 打包成 jar 后<strong>不能用 File</strong></td>
+</tr>
+</tbody></table>
+<p>⚠ <strong>重点</strong>：Maven 打包后，<code>src/main/resources</code> 下的文件会被打进 jar 压缩包内部，不是磁盘上真实独立文件，不能用 <code>File</code> 读取。</p>
+<h3 id="2-classpath（类路径）"><a href="#2-classpath（类路径）" class="headerlink" title="2. classpath（类路径）"></a>2. classpath（类路径）</h3><ul>
+<li>classpath 是虚拟目录，根目录 <code>/</code> 等价于 <code>src/main/resources</code> + <code>src/main/java</code> 编译之后的根位置</li>
+<li>jar 包解压后，看不到 <code>src/main/resources</code> 这一层文件夹，资源文件直接放在 jar 包根下</li>
+<li>classpath 资源不能转为 <code>File</code> 对象，只能拿到 <code>InputStream</code> 字节流</li>
+</ul>
+<h3 id="3-读取-classpath-资源核心代码"><a href="#3-读取-classpath-资源核心代码" class="headerlink" title="3. 读取 classpath 资源核心代码"></a>3. 读取 classpath 资源核心代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从类加载器读取 resources 下的文件，得到输入流</span></span><br><span class="line"><span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> Test.class.getClassLoader().getResourceAsStream(<span class="string">&quot;data.json&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>⚠ <strong>路径直接写文件名</strong>，不要写 <code>src/main/resources/</code>。</p>
+<h3 id="4-commons-io-依赖"><a href="#4-commons-io-依赖" class="headerlink" title="4. commons-io 依赖"></a>4. commons-io 依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-io<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-io<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>利用 <code>IOUtils.toString</code> 把流直接转字符串：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">content</span> <span class="operator">=</span> IOUtils.toString(in, <span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">    System.out.println(content);</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-考试易错点总结"><a href="#5-考试易错点总结" class="headerlink" title="5. 考试易错点总结"></a>5. 考试易错点总结</h3><table>
+<thead>
+<tr>
+<th>易错点</th>
+<th>正确做法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IDE 本地 <code>new File(&quot;src/main/resources/xxx&quot;)</code> 能读到</td>
+<td>打包 jar 运行直接失效，不能依赖</td>
+</tr>
+<tr>
+<td>resources 下文件用 <code>File</code> 读取</td>
+<td>✅ 用 <code>ClassLoader.getResourceAsStream()</code> 拿流</td>
+</tr>
+<tr>
+<td>classpath 路径带上 <code>src/main/resources</code></td>
+<td>✅ 直接写资源文件名</td>
+</tr>
+<tr>
+<td>拿到 <code>InputStream</code> 直接当文本用</td>
+<td>✅ 用 IO 工具（commons-io）转文本</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="六、Spring-Resource-ResourceLoader"><a href="#六、Spring-Resource-ResourceLoader" class="headerlink" title="六、Spring Resource &amp; ResourceLoader"></a>六、Spring Resource &amp; ResourceLoader</h2><h3 id="1-核心类"><a href="#1-核心类" class="headerlink" title="1. 核心类"></a>1. 核心类</h3><table>
+<thead>
+<tr>
+<th>类</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Resource</code></td>
+<td>统一封装资源，屏蔽来源差异，支持 classpath、本地磁盘、网络远程资源</td>
+</tr>
+<tr>
+<td><code>ResourceLoader</code></td>
+<td>资源加载器，获取 <code>Resource</code> 对象，可直接 <code>@Autowired</code> 注入到 Spring Bean</td>
+</tr>
+</tbody></table>
+<h3 id="2-代码结构"><a href="#2-代码结构" class="headerlink" title="2. 代码结构"></a>2. 代码结构</h3><p><strong>接口 FileService</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">FileService</span> &#123;</span><br><span class="line">    String <span class="title function_">getContent</span><span class="params">(String name)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>实现类 FileServiceImpl</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FileServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">FileService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ResourceLoader loader;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getContent</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// loader.getResource() 得到 Resource 对象，再获取输入流</span></span><br><span class="line">            <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> loader.getResource(name).getInputStream();</span><br><span class="line">            <span class="keyword">return</span> IOUtils.toString(in, <span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>@Service</code> 交给 Spring 管理；<code>ResourceLoader</code> 由 Spring 自动注入，不需要自己 <code>new</code></li>
+</ul>
+<h3 id="3-三种资源协议（重点）"><a href="#3-三种资源协议（重点）" class="headerlink" title="3. 三种资源协议（重点）"></a>3. 三种资源协议（重点）</h3><table>
+<thead>
+<tr>
+<th>协议前缀</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>classpath:</code></td>
+<td>读取 resources 下 classpath 资源</td>
+<td><code>classpath:data/urls.txt</code></td>
+</tr>
+<tr>
+<td><code>file:</code></td>
+<td>读取磁盘本地文件</td>
+<td><code>file:mywork/readme.md</code></td>
+</tr>
+<tr>
+<td><code>http:</code> &#x2F; <code>https:</code></td>
+<td>读取网络远程资源</td>
+<td><code>https://www.zhihu.com/xxx</code></td>
+</tr>
+</tbody></table>
+<p><strong>调用示例</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">FileService</span> <span class="variable">fileService</span> <span class="operator">=</span> context.getBean(FileService.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 1. 读取 classpath 资源</span></span><br><span class="line"><span class="type">String</span> <span class="variable">content</span> <span class="operator">=</span> fileService.getContent(<span class="string">&quot;classpath:data/urls.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 读取本地磁盘文件</span></span><br><span class="line"><span class="type">String</span> <span class="variable">content2</span> <span class="operator">=</span> fileService.getContent(<span class="string">&quot;file:mywork/readme.md&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 读取远程网页</span></span><br><span class="line"><span class="type">String</span> <span class="variable">content3</span> <span class="operator">=</span> fileService.getContent(<span class="string">&quot;https://www.zhihu.com/question&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-核心优势"><a href="#4-核心优势" class="headerlink" title="4. 核心优势"></a>4. 核心优势</h3><p>Spring 把 classpath 文件、本地文件、网络远程文件，全部封装成统一 <code>Resource</code> 对象。调用方只需写不同协议前缀，业务代码完全不用修改，一套代码兼容多种来源。</p>
+<p>⚠ <strong>对比原生 Java 写法</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>支持范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原生 <code>classLoader.getResourceAsStream()</code></td>
+<td>仅支持 classpath</td>
+</tr>
+<tr>
+<td>Spring <code>ResourceLoader</code></td>
+<td>支持 classpath &#x2F; file &#x2F; http 三种资源</td>
+</tr>
+</tbody></table>
+<h3 id="5-易错点"><a href="#5-易错点" class="headerlink" title="5. 易错点"></a>5. 易错点</h3><table>
+<thead>
+<tr>
+<th>易错点</th>
+<th>正确做法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>classpath:</code> 后子文件夹路径漏写</td>
+<td>完整路径：<code>classpath:data/urls.txt</code></td>
+</tr>
+<tr>
+<td><code>loader.getResource()</code> 找不到资源返回 null</td>
+<td>会抛异常，不返回 null；原生 <code>classLoader.getResourceAsStream</code> 找不到才返回 null</td>
+</tr>
+<tr>
+<td>普通 main 方法 <code>new</code> 对象后用 <code>@Autowired</code></td>
+<td>✅ 必须放在 Spring 容器中，<code>@Autowired ResourceLoader</code> 才生效</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="七、Spring-Bean-生命周期-PostConstruct"><a href="#七、Spring-Bean-生命周期-PostConstruct" class="headerlink" title="七、Spring Bean 生命周期 @PostConstruct"></a>七、Spring Bean 生命周期 @PostConstruct</h2><h3 id="1-Bean-完整生命周期流程"><a href="#1-Bean-完整生命周期流程" class="headerlink" title="1. Bean 完整生命周期流程"></a>1. Bean 完整生命周期流程</h3><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>实例化 Bean</td>
+<td>Spring 调用构造方法，创建对象</td>
+</tr>
+<tr>
+<td>完成依赖注入</td>
+<td>给对象的属性、<code>@Autowired</code> 成员赋值</td>
+</tr>
+<tr>
+<td><code>afterPropertiesSet()</code></td>
+<td>接口方式初始化</td>
+</tr>
+<tr>
+<td><code>@PostConstruct</code> 初始化方法</td>
+<td>依赖注入完成后自动执行</td>
+</tr>
+<tr>
+<td>Bean 使用</td>
+<td>业务代码正常运行</td>
+</tr>
+<tr>
+<td><code>destroy</code> 销毁</td>
+<td>容器关闭时执行销毁逻辑</td>
+</tr>
+</tbody></table>
+<p><strong>执行顺序</strong>：实例化 → 依赖注入 → <code>afterPropertiesSet</code> → <code>@PostConstruct</code> 初始化 → Bean 使用 → destroy 销毁</p>
+<h3 id="2-重点注解-PostConstruct"><a href="#2-重点注解-PostConstruct" class="headerlink" title="2. 重点注解 @PostConstruct"></a>2. 重点注解 @PostConstruct</h3><ul>
+<li><strong>包路径</strong>：<code>javax.annotation.PostConstruct</code></li>
+<li><strong>作用</strong>：依赖注入全部完成之后，自动执行该方法，做初始化工作</li>
+<li>方法名可以随便取，不一定叫 <code>init</code>；无返回值，无参数</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.annotation.PostConstruct;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SubjectServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">SubjectService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// Bean 依赖注入完成后自动执行</span></span><br><span class="line">        System.out.println(<span class="string">&quot;启动啦&quot;</span>);</span><br><span class="line">        <span class="comment">// 做初始化：加载数据、初始化集合、读取资源文件等</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-业务场景"><a href="#3-业务场景" class="headerlink" title="3. 业务场景"></a>3. 业务场景</h3><p>把原来 <code>static {}</code> 静态代码块的初始化逻辑迁移到 <code>@PostConstruct</code> 方法。</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>执行时机</th>
+<th>能否使用注入的成员变量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>static {}</code> 静态代码块</td>
+<td>类加载时执行</td>
+<td>否，此时还没有 Spring 依赖注入</td>
+</tr>
+<tr>
+<td><code>@PostConstruct</code></td>
+<td>Spring 完成依赖注入之后</td>
+<td>能，可以使用 <code>@Autowired</code> 注入好的成员变量</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SubjectServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">SubjectService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 初始化数据，填充 map</span></span><br><span class="line">        <span class="type">Subject</span> <span class="variable">subject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Subject</span>();</span><br><span class="line">        subject.setId(<span class="string">&quot;s001&quot;</span>);</span><br><span class="line">        subject.setName(<span class="string">&quot;成都&quot;</span>);</span><br><span class="line">        subject.setMusician(<span class="string">&quot;赵雷&quot;</span>);</span><br><span class="line">        subjectMap.put(subject.getId(), subject);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-简答背诵版"><a href="#4-简答背诵版" class="headerlink" title="4. 简答背诵版"></a>4. 简答背诵版</h3><p>Spring Bean 生命周期：实例化对象 → 依赖注入 → 初始化方法 → 使用 Bean → 销毁。</p>
+<p><code>@PostConstruct</code> 标注的方法，在依赖注入完成后自动执行，用于 Bean 初始化，适合加载初始数据。包名 <code>javax.annotation.PostConstruct</code>。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Mikaela</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/07/23/Spring%20Web%E5%85%A8%E6%A0%88%E6%80%BB%E7%BB%93/">http://example.com/2026/07/23/Spring%20Web%E5%85%A8%E6%A0%88%E6%80%BB%E7%BB%93/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Mikaela</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/06/11/JS%E6%80%BB%E7%BB%93/" title="JS总结"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">JS总结</div></div><div class="info-2"><div class="info-item-1">JavaScript总结一、JS 代码引入 HTML 的两种方式1. 内嵌式（写在 HTML 内部） 使用 &lt;script&gt;&lt;/script&gt; 标签包裹 JS 代码 规范写在 &lt;body&gt; 标签末尾 旧写法：&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt; 现代浏览器可省略全部属性，直接写 &lt;script&gt; 注意：仅 HTML 中需要 script 标签，独立 .js 外部文件不能写 script 标签  2. 外部引入式（推荐，代码分离） JS 代码单独存为 .js 文件 通过带 src 属性的 script 标签引入  1&lt;script src=&quot;index.js&quot;&gt;&lt;/script&gt;  优势：HTML、JS 代码分离，项目易维护。  二、控制台输出 console.log()作用：仅在浏览器控制台打印内容，不会直接展示在网页页面 语法： 1console.log(&quot;输出内容&q...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Mikaela</div><div class="author-info-description">不知道写啥hhh</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring-Web-%E5%85%A8%E6%A0%88%E7%9F%A5%E8%AF%86%E7%82%B9%E5%BD%92%E7%BA%B3"><span class="toc-number">1.</span> <span class="toc-text">Spring Web 全栈知识点归纳</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Maven-%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-number">1.1.</span> <span class="toc-text">一、Maven 核心知识点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A1%B9%E7%9B%AE%E8%87%AA%E8%BA%AB%E5%9D%90%E6%A0%87%EF%BC%88%E5%AE%9A%E4%B9%89%E6%9C%AC%E9%A1%B9%E7%9B%AE%EF%BC%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">1. 项目自身坐标（定义本项目）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-properties-%E5%B1%9E%E6%80%A7%E6%A0%87%E7%AD%BE"><span class="toc-number">1.1.2.</span> <span class="toc-text">2. properties 属性标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-dependencies-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86"><span class="toc-number">1.1.3.</span> <span class="toc-text">3. dependencies 依赖管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-build-plugins-%E6%8F%92%E4%BB%B6%E4%BD%93%E7%B3%BB"><span class="toc-number">1.1.4.</span> <span class="toc-text">4. build &#x2F; plugins 插件体系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%9F%BA%E7%A1%80%E8%A1%A5%E5%85%85"><span class="toc-number">1.1.5.</span> <span class="toc-text">5. 基础补充</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Spring-HelloWorld-%E6%B3%A8%E8%A7%A3%E5%BC%80%E5%8F%91"><span class="toc-number">1.2.</span> <span class="toc-text">二、Spring HelloWorld 注解开发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Bean-%E6%A6%82%E5%BF%B5"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. Bean 概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Spring-%E6%A0%B8%E5%BF%83%E4%BE%9D%E8%B5%96"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. Spring 核心依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%A0%B8%E5%BF%83%E6%B3%A8%E8%A7%A3-ComponentScan"><span class="toc-number">1.2.3.</span> <span class="toc-text">3. 核心注解 @ComponentScan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%9B%9B%E4%B8%AA-Bean-%E6%B3%A8%E8%A7%A3"><span class="toc-number">1.2.4.</span> <span class="toc-text">4. 四个 Bean 注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%90%AF%E5%8A%A8-IoC-%E5%AE%B9%E5%99%A8%EF%BC%882-%E7%A7%8D%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%EF%BC%89"><span class="toc-number">1.2.5.</span> <span class="toc-text">5. 启动 IoC 容器（2 种构造方法）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E8%8E%B7%E5%8F%96-Bean"><span class="toc-number">1.2.6.</span> <span class="toc-text">6. 获取 Bean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E5%AE%8C%E6%95%B4%E8%BF%90%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.2.7.</span> <span class="toc-text">7. 完整运行流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E5%BF%85%E8%83%8C%E6%98%93%E9%94%99%E7%82%B9"><span class="toc-number">1.2.8.</span> <span class="toc-text">8. 必背易错点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Java-%E6%B3%A8%E8%A7%A3%EF%BC%88Annotation%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">三、Java 注解（Annotation）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%85%83%E6%B3%A8%E8%A7%A3%EF%BC%88%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3%E7%9A%84%E6%B3%A8%E8%A7%A3%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. 元注解（定义注解的注解）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Target"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">@Target</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Retention"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">@Retention</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Documented"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">@Documented</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#interface"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">@interface</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%87%E8%83%BD%E6%A0%87%E5%87%86%E6%A8%A1%E6%9D%BF%EF%BC%88%E7%9B%B4%E6%8E%A5%E9%BB%98%E5%86%99%EF%BC%89%F0%9F%92%A1"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. 万能标准模板（直接默写）💡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%A1%A5%E5%85%85%E7%89%B9%E6%80%A7"><span class="toc-number">1.3.3.</span> <span class="toc-text">3. 补充特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81Spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%88-Service-Autowired%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">四、Spring 依赖注入（@Service + @Autowired）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%A4%E4%B8%AA%E6%A0%B8%E5%BF%83%E6%B3%A8%E8%A7%A3"><span class="toc-number">1.4.1.</span> <span class="toc-text">1. 两个核心注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%9A%E5%8A%A1%E5%9C%BA%E6%99%AF"><span class="toc-number">1.4.2.</span> <span class="toc-text">2. 业务场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E2%9C%85-Spring-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E5%86%99%E6%B3%95"><span class="toc-number">1.4.3.</span> <span class="toc-text">3. ✅ Spring 依赖注入写法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E2%9A%A0-%E4%B8%A4%E4%B8%AA%E7%BC%BA%E4%B8%80%E4%B8%8D%E5%8F%AF%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.4.4.</span> <span class="toc-text">4. ⚠ 两个缺一不可的条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.5.</span> <span class="toc-text">5. 执行流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%8E%A5%E5%8F%A3%E5%B0%8F%E9%87%8D%E7%82%B9"><span class="toc-number">1.4.6.</span> <span class="toc-text">6. 接口小重点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%98%93%E9%94%99%E5%9D%91"><span class="toc-number">1.4.7.</span> <span class="toc-text">7. 易错坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81Spring-Resource-%E8%B5%84%E6%BA%90%E8%AF%BB%E5%8F%96"><span class="toc-number">1.5.</span> <span class="toc-text">五、Spring Resource 资源读取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%89%E7%A7%8D%E6%96%87%E4%BB%B6%E4%BD%8D%E7%BD%AE"><span class="toc-number">1.5.1.</span> <span class="toc-text">1. 三种文件位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-classpath%EF%BC%88%E7%B1%BB%E8%B7%AF%E5%BE%84%EF%BC%89"><span class="toc-number">1.5.2.</span> <span class="toc-text">2. classpath（类路径）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%AF%BB%E5%8F%96-classpath-%E8%B5%84%E6%BA%90%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81"><span class="toc-number">1.5.3.</span> <span class="toc-text">3. 读取 classpath 资源核心代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-commons-io-%E4%BE%9D%E8%B5%96"><span class="toc-number">1.5.4.</span> <span class="toc-text">4. commons-io 依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%80%83%E8%AF%95%E6%98%93%E9%94%99%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.5.</span> <span class="toc-text">5. 考试易错点总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81Spring-Resource-ResourceLoader"><span class="toc-number">1.6.</span> <span class="toc-text">六、Spring Resource &amp; ResourceLoader</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A0%B8%E5%BF%83%E7%B1%BB"><span class="toc-number">1.6.1.</span> <span class="toc-text">1. 核心类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84"><span class="toc-number">1.6.2.</span> <span class="toc-text">2. 代码结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%89%E7%A7%8D%E8%B5%84%E6%BA%90%E5%8D%8F%E8%AE%AE%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="toc-number">1.6.3.</span> <span class="toc-text">3. 三种资源协议（重点）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%A0%B8%E5%BF%83%E4%BC%98%E5%8A%BF"><span class="toc-number">1.6.4.</span> <span class="toc-text">4. 核心优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%98%93%E9%94%99%E7%82%B9"><span class="toc-number">1.6.5.</span> <span class="toc-text">5. 易错点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81Spring-Bean-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-PostConstruct"><span class="toc-number">1.7.</span> <span class="toc-text">七、Spring Bean 生命周期 @PostConstruct</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Bean-%E5%AE%8C%E6%95%B4%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%B5%81%E7%A8%8B"><span class="toc-number">1.7.1.</span> <span class="toc-text">1. Bean 完整生命周期流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%87%8D%E7%82%B9%E6%B3%A8%E8%A7%A3-PostConstruct"><span class="toc-number">1.7.2.</span> <span class="toc-text">2. 重点注解 @PostConstruct</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%9A%E5%8A%A1%E5%9C%BA%E6%99%AF"><span class="toc-number">1.7.3.</span> <span class="toc-text">3. 业务场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%AE%80%E7%AD%94%E8%83%8C%E8%AF%B5%E7%89%88"><span class="toc-number">1.7.4.</span> <span class="toc-text">4. 简答背诵版</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/Spring%20Web%E5%85%A8%E6%A0%88%E6%80%BB%E7%BB%93/" title="Spring Web全栈总结">Spring Web全栈总结</a><time datetime="2026-07-22T16:00:00.000Z" title="发表于 2026-07-23 00:00:00">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/11/JS%E6%80%BB%E7%BB%93/" title="JS总结">JS总结</a><time datetime="2026-06-10T16:00:00.000Z" title="发表于 2026-06-11 00:00:00">2026-06-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/07/CTFshow%20vip%E9%A2%98%E7%9B%AE%E9%99%90%E5%85%8Dwp%EF%BC%88%E6%B3%84%E9%9C%B2%EF%BC%89/" title="CTFshow vip题目限免wp（泄露）">CTFshow vip题目限免wp（泄露）</a><time datetime="2026-06-06T16:00:00.000Z" title="发表于 2026-06-07 00:00:00">2026-06-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/07/CTFshow%E5%85%83%E6%97%A6%E9%A2%98%E9%83%A8%E5%88%86wp/" title="CTFshow元旦题部分wp">CTFshow元旦题部分wp</a><time datetime="2026-06-06T16:00:00.000Z" title="发表于 2026-06-07 00:00:00">2026-06-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/07/C%E8%AF%AD%E8%A8%80%E6%80%BB%E7%BB%93/" title="C语言总结">C语言总结</a><time datetime="2026-06-06T16:00:00.000Z" title="发表于 2026-06-07 00:00:00">2026-06-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Mikaela</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
