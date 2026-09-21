@@ -1,19 +1,22 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SmartScales 开发个人负责部分整理 | Mikaela</title><meta name="author" content="Mikaela"><meta name="copyright" content="Mikaela"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="SmartScales 开发个人负责部分整理 项目：宠境智护（SmartScales）—— 基于 YOLO 视觉模型 + 环境规则评估 + LLM 文案生成的宠物健康诊断系统 两轮工作围绕”可追溯”展开：第一轮做诊断结果的持久化与失败恢复；第二轮做图片资源的统一治理   一、第一轮：诊断评估快照与重试接口1.1 任务范围补全 diagnosis_tasks 表的 7 个快照字段 + 实现历史读取走">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SmartScales 开发个人负责部分整理 | Mikaela</title><meta name="author" content="Mikaela"><meta name="copyright" content="Mikaela"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="SmartScales 开发个人负责部分整理 项目：宠境智护（SmartScales）—— 基于 YOLO 视觉模型 + 环境规则评估 + LLM 文案生成的宠物健康诊断系统 三轮工作从“可追溯”逐步扩展到“可治理、可协作”：第一轮做诊断结果的持久化与失败恢复；第二轮做图片资源的统一治理；第三轮补齐后台媒体治理与反馈处理闭环   一、第一轮：诊断评估快照与重试接口1.1 任务范围补全 diagno">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SmartScales 开发个人负责部分整理">
 <meta property="og:url" content="https://mikaela07.github.io/2026/09/07/SmartScales%E5%BC%80%E5%8F%91%E4%B8%AA%E4%BA%BA%E8%B4%9F%E8%B4%A3%E9%83%A8%E5%88%86%E6%95%B4%E7%90%86/index.html">
 <meta property="og:site_name" content="Mikaela">
-<meta property="og:description" content="SmartScales 开发个人负责部分整理 项目：宠境智护（SmartScales）—— 基于 YOLO 视觉模型 + 环境规则评估 + LLM 文案生成的宠物健康诊断系统 两轮工作围绕”可追溯”展开：第一轮做诊断结果的持久化与失败恢复；第二轮做图片资源的统一治理   一、第一轮：诊断评估快照与重试接口1.1 任务范围补全 diagnosis_tasks 表的 7 个快照字段 + 实现历史读取走">
+<meta property="og:description" content="SmartScales 开发个人负责部分整理 项目：宠境智护（SmartScales）—— 基于 YOLO 视觉模型 + 环境规则评估 + LLM 文案生成的宠物健康诊断系统 三轮工作从“可追溯”逐步扩展到“可治理、可协作”：第一轮做诊断结果的持久化与失败恢复；第二轮做图片资源的统一治理；第三轮补齐后台媒体治理与反馈处理闭环   一、第一轮：诊断评估快照与重试接口1.1 任务范围补全 diagno">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://mikaela07.github.io/img/avatar.jpg">
 <meta property="article:published_time" content="2026-09-06T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-09-08T03:14:39.000Z">
+<meta property="article:modified_time" content="2026-09-21T16:35:00.000Z">
 <meta property="article:author" content="Mikaela">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="MinIO">
+<meta property="article:tag" content="RBAC">
 <meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="乐观锁">
 <meta property="article:tag" content="对象存储">
 <meta property="article:tag" content="快照设计">
+<meta property="article:tag" content="状态机">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://mikaela07.github.io/img/avatar.jpg"><script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -22,7 +25,7 @@
   "url": "https://mikaela07.github.io/2026/09/07/SmartScales%E5%BC%80%E5%8F%91%E4%B8%AA%E4%BA%BA%E8%B4%9F%E8%B4%A3%E9%83%A8%E5%88%86%E6%95%B4%E7%90%86/",
   "image": "https://mikaela07.github.io/img/avatar.jpg",
   "datePublished": "2026-09-06T16:00:00.000Z",
-  "dateModified": "2026-09-08T03:14:39.000Z",
+  "dateModified": "2026-09-21T16:35:00.000Z",
   "author": [
     {
       "@type": "Person",
@@ -163,9 +166,9 @@
   isHighlightShrink: false,
   isToc: true,
   pageType: 'post'
-}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/img/bg.jpg);"></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/bg.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Mikaela</span></a><a class="nav-page-title" href="/"><span class="site-name">SmartScales 开发个人负责部分整理</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">SmartScales 开发个人负责部分整理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-06T16:00:00.000Z" title="发表于 2026-09-07 00:00:00">2026-09-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-08T03:14:39.000Z" title="更新于 2026-09-08 11:14:39">2026-09-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C/">项目经验</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C/%E9%9D%A2%E8%AF%95%E5%87%86%E5%A4%87/">面试准备</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="SmartScales-开发个人负责部分整理"><a href="#SmartScales-开发个人负责部分整理" class="headerlink" title="SmartScales 开发个人负责部分整理"></a>SmartScales 开发个人负责部分整理</h1><blockquote>
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/img/bg.jpg);"></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/bg.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Mikaela</span></a><a class="nav-page-title" href="/"><span class="site-name">SmartScales 开发个人负责部分整理</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">SmartScales 开发个人负责部分整理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-06T16:00:00.000Z" title="发表于 2026-09-07 00:00:00">2026-09-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-21T16:35:00.000Z" title="更新于 2026-09-22 00:35:00">2026-09-22</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C/">项目经验</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C/%E9%9D%A2%E8%AF%95%E5%87%86%E5%A4%87/">面试准备</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="SmartScales-开发个人负责部分整理"><a href="#SmartScales-开发个人负责部分整理" class="headerlink" title="SmartScales 开发个人负责部分整理"></a>SmartScales 开发个人负责部分整理</h1><blockquote>
 <p>项目：宠境智护（SmartScales）—— 基于 YOLO 视觉模型 + 环境规则评估 + LLM 文案生成的宠物健康诊断系统</p>
-<p>两轮工作围绕”可追溯”展开：第一轮做诊断结果的持久化与失败恢复；第二轮做图片资源的统一治理</p>
+<p>三轮工作从“可追溯”逐步扩展到“可治理、可协作”：第一轮做诊断结果的持久化与失败恢复；第二轮做图片资源的统一治理；第三轮补齐后台媒体治理与反馈处理闭环</p>
 </blockquote>
 <hr>
 <h2 id="一、第一轮：诊断评估快照与重试接口"><a href="#一、第一轮：诊断评估快照与重试接口" class="headerlink" title="一、第一轮：诊断评估快照与重试接口"></a>一、第一轮：诊断评估快照与重试接口</h2><h3 id="1-1-任务范围"><a href="#1-1-任务范围" class="headerlink" title="1.1 任务范围"></a>1.1 任务范围</h3><p>补全 <code>diagnosis_tasks</code> 表的 7 个快照字段 + 实现历史读取走快照逻辑 + 新增重试接口</p>
@@ -396,7 +399,244 @@
 </ol>
 <hr>
 <h3 id="2-4-V3-0-Sprint-交付范围与未完成接入"><a href="#2-4-V3-0-Sprint-交付范围与未完成接入" class="headerlink" title="2.4 V3.0 Sprint 交付范围与未完成接入"></a>2.4 V3.0 Sprint 交付范围与未完成接入</h3><p>本轮已完成统一媒体能力，以及诊断、异常观察两个真实接入场景；头像和宠物照片通过旧接口兼容接入。按照 V3.0 Sprint 文档，问题反馈附件、社区帖子图片、商品图片也应接入同一媒体能力，目前仍由对应业务模块继续完成，不能表述为“所有业务场景均已统一”。</p>
-<h2 id="三、面试高频追问（更新版）"><a href="#三、面试高频追问（更新版）" class="headerlink" title="三、面试高频追问（更新版）"></a>三、面试高频追问（更新版）</h2><table>
+<h2 id="三、第三轮：后台媒体与反馈处理闭环"><a href="#三、第三轮：后台媒体与反馈处理闭环" class="headerlink" title="三、第三轮：后台媒体与反馈处理闭环"></a>三、第三轮：后台媒体与反馈处理闭环</h2><h3 id="3-1-任务范围"><a href="#3-1-任务范围" class="headerlink" title="3.1 任务范围"></a>3.1 任务范围</h3><p>本轮对应 V4.1 后台媒体与反馈后台任务，主要交付两组管理端 API：</p>
+<ul>
+<li><strong>后台媒体</strong>：管理员上传图片、按 objectKey 重新生成预签名 URL、删除未被业务引用的对象</li>
+<li><strong>反馈后台</strong>：分页筛选、详情查询、内部备注、受控状态流转、并发版本冲突和状态审计</li>
+<li><strong>后台权限</strong>：复用现有登录 Token，根据 <code>users.role</code> 对 <code>/api/admin/**</code> 做服务端管理员校验</li>
+<li><strong>数据库迁移</strong>：为 <code>users</code> 增加 <code>role</code>、为 <code>feedback</code> 增加 <code>version</code>，新建内部备注表和状态审计表</li>
+</ul>
+<blockquote>
+<p><strong>边界说明</strong>：本轮交付的是可供统一后台页面直接联调的后端接口，不新建第二套 <code>admin-web</code>；统一后台登录接口和后台前端基座属于团队其他任务。本轮暂时复用现有登录态，在每个后台入口继续做角色校验。</p>
+</blockquote>
+<h3 id="3-2-技术难点"><a href="#3-2-技术难点" class="headerlink" title="3.2 技术难点"></a>3.2 技术难点</h3><h4 id="难点1：后台权限不能只靠“前端隐藏按钮”"><a href="#难点1：后台权限不能只靠“前端隐藏按钮”" class="headerlink" title="难点1：后台权限不能只靠“前端隐藏按钮”"></a>难点1：后台权限不能只靠“前端隐藏按钮”</h4><p>如果只在前端根据角色隐藏菜单，普通用户仍然可以绕过页面，直接用 Postman 或 curl 调后台接口。因此本轮把认证与授权拆成两层：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Bearer Token</span><br><span class="line">  → AuthInterceptor 验证登录态</span><br><span class="line">  → request 写入 authenticatedUserId</span><br><span class="line">  → AdminAccessService 查询 users.role + status</span><br><span class="line">  → ADMIN / SUPER_ADMIN 放行，其他角色返回 403</span><br></pre></td></tr></table></figure>
+
+<p>这里要区分两个概念：</p>
+<ul>
+<li><strong>认证（Authentication）</strong>：你是谁？没有有效 Token 返回 401</li>
+<li><strong>授权（Authorization）</strong>：你能不能做这个操作？已登录但不是管理员返回 403</li>
+</ul>
+<p><code>users.role</code> 是权限判断的唯一事实来源，默认值为 <code>USER</code>。即使前端参数伪造角色，后端仍以数据库为准。</p>
+<h4 id="难点2：图片校验从扩展名升级为魔数识别"><a href="#难点2：图片校验从扩展名升级为魔数识别" class="headerlink" title="难点2：图片校验从扩展名升级为魔数识别"></a>难点2：图片校验从扩展名升级为魔数识别</h4><p>第二轮统一媒体服务主要检查扩展名，仍存在把文本文件改名为 <code>.png</code> 后绕过校验的问题。本轮后台上传增加真实文件头识别：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>识别特征</th>
+<th>允许扩展名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JPEG</td>
+<td>开头为 <code>FF D8 FF</code></td>
+<td><code>.jpg</code> &#x2F; <code>.jpeg</code></td>
+</tr>
+<tr>
+<td>PNG</td>
+<td>开头为 <code>89 50 4E 47 0D 0A 1A 0A</code></td>
+<td><code>.png</code></td>
+</tr>
+<tr>
+<td>WebP</td>
+<td><code>RIFF</code> 容器且第 8～11 字节为 <code>WEBP</code></td>
+<td><code>.webp</code></td>
+</tr>
+</tbody></table>
+<p>完整校验链路：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">读取文件字节</span><br><span class="line">  → 根据魔数识别真实 MIME</span><br><span class="line">  → 检查原始文件名扩展名</span><br><span class="line">  → 校验“真实 MIME ↔ 扩展名”是否匹配</span><br><span class="line">  → 校验 scene 白名单与 10 MiB 大小限制</span><br><span class="line">  → 上传 MinIO</span><br></pre></td></tr></table></figure>
+
+<p>这样能同时挡住两类伪装：</p>
+<ul>
+<li>文本文件改名为 <code>fake.png</code>：魔数不是 PNG，直接拒绝</li>
+<li>PNG 内容改名为 <code>fake.jpg</code>：能识别出 PNG，但与 <code>.jpg</code> 不匹配，仍然拒绝</li>
+</ul>
+<blockquote>
+<p>魔数校验比只看扩展名可靠，但仍不是完整的恶意内容检测。生产环境可以继续增加图片解码、统一转码、像素尺寸限制和病毒扫描。</p>
+</blockquote>
+<h4 id="难点3：删除前做业务引用保护"><a href="#难点3：删除前做业务引用保护" class="headerlink" title="难点3：删除前做业务引用保护"></a>难点3：删除前做业务引用保护</h4><p>对象存储的删除是物理删除。如果后台只收到 objectKey 就直接删，可能导致商品主图、历史订单、社区帖子或诊断报告出现永久裂图。</p>
+<p>本轮增加 <code>MediaReferenceService</code>，删除前逐项检查：</p>
+<table>
+<thead>
+<tr>
+<th>业务表</th>
+<th>引用列</th>
+<th>存储形式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>product</code></td>
+<td><code>main_image_url</code></td>
+<td>单值</td>
+</tr>
+<tr>
+<td><code>product</code></td>
+<td><code>detail_images</code></td>
+<td>逗号分隔</td>
+</tr>
+<tr>
+<td><code>order_item</code></td>
+<td><code>product_image</code></td>
+<td>单值快照</td>
+</tr>
+<tr>
+<td><code>community_post</code></td>
+<td><code>image_urls</code></td>
+<td>逗号分隔</td>
+</tr>
+<tr>
+<td><code>abnormal_observation</code></td>
+<td><code>image_urls</code></td>
+<td>逗号分隔</td>
+</tr>
+<tr>
+<td><code>diagnosis_tasks</code></td>
+<td><code>image_asset_ids</code></td>
+<td>逗号分隔</td>
+</tr>
+<tr>
+<td><code>product_review</code></td>
+<td><code>image_urls</code></td>
+<td>逗号分隔</td>
+</tr>
+</tbody></table>
+<p>删除流程变为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DELETE /api/admin/media?objectKey=...</span><br><span class="line">  → 校验管理员角色</span><br><span class="line">  → 校验 objectKey 格式和 scene</span><br><span class="line">  → 查询业务引用</span><br><span class="line">  → 存在引用：返回 409</span><br><span class="line">  → 无引用：删除 MinIO 对象</span><br></pre></td></tr></table></figure>
+
+<p>这里返回 409（Conflict）而不是 400：请求格式本身没问题，冲突发生在“资源当前仍被业务使用”的状态上。</p>
+<h4 id="难点4：反馈处理不是任意改状态，而是显式状态机"><a href="#难点4：反馈处理不是任意改状态，而是显式状态机" class="headerlink" title="难点4：反馈处理不是任意改状态，而是显式状态机"></a>难点4：反馈处理不是任意改状态，而是显式状态机</h4><p>后台处理反馈只允许以下路径：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PENDING → PROCESSING → RESOLVED</span><br><span class="line">                         ↓</span><br><span class="line">                     PROCESSING（重新打开）</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>PENDING → PROCESSING</code>：管理员接单并开始处理</li>
+<li><code>PROCESSING → RESOLVED</code>：问题处理完成</li>
+<li><code>RESOLVED → PROCESSING</code>：用户复现或问题重新出现</li>
+<li>其他跳转：返回 422</li>
+</ul>
+<p>为什么不允许 <code>PENDING → RESOLVED</code>？因为它跳过了“谁开始处理、何时处理”的过程状态，不利于团队协作和审计。为什么允许重新打开？因为“已解决”不是不可逆终态，真实客服场景中问题可能复发。</p>
+<h4 id="难点5：乐观锁防止多管理员互相覆盖"><a href="#难点5：乐观锁防止多管理员互相覆盖" class="headerlink" title="难点5：乐观锁防止多管理员互相覆盖"></a>难点5：乐观锁防止多管理员互相覆盖</h4><p>场景：管理员 A 和 B 同时打开反馈详情，都看到 <code>version=1</code>。A 先把状态改成 PROCESSING；B 的页面没刷新，又提交 RESOLVED。如果只按 id 更新，B 会静默覆盖 A 的处理结果。</p>
+<p>本轮的更新 SQL 同时匹配 id 和客户端版本：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> feedback</span><br><span class="line"><span class="keyword">SET</span> status <span class="operator">=</span> ?,</span><br><span class="line">    version <span class="operator">=</span> version <span class="operator">+</span> <span class="number">1</span>,</span><br><span class="line">    updated_at <span class="operator">=</span> ?</span><br><span class="line"><span class="keyword">WHERE</span> id <span class="operator">=</span> ?</span><br><span class="line">  <span class="keyword">AND</span> version <span class="operator">=</span> ?;</span><br></pre></td></tr></table></figure>
+
+<p>判断逻辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">影响行数 = 1 → 更新成功，version + 1</span><br><span class="line">影响行数 = 0 → 数据已被别人修改，返回 409，提示刷新</span><br></pre></td></tr></table></figure>
+
+<p>服务层在执行 SQL 前会先比较一次版本，用于尽早返回友好错误；真正防止“比较后、更新前又被别人抢先修改”的，是 SQL 的 <code>WHERE version = ?</code> 条件。</p>
+<p><strong>为什么不用 synchronized</strong>：</p>
+<ul>
+<li><code>synchronized</code> 只保护单个 JVM，服务多实例部署后失效</li>
+<li>数据库条件更新天然跨实例生效</li>
+<li>反馈冲突概率低，乐观锁不需要长期占有数据库行锁</li>
+</ul>
+<p>新增内部备注也会把 version 加一，因为备注属于详情上下文的一部分。其他管理员基于旧详情继续操作时应先刷新，避免忽略最新处理信息。</p>
+<h4 id="难点6：内部备注与状态审计分表"><a href="#难点6：内部备注与状态审计分表" class="headerlink" title="难点6：内部备注与状态审计分表"></a>难点6：内部备注与状态审计分表</h4><p>两种记录看起来都像“管理员写了一段话”，但职责不同：</p>
+<table>
+<thead>
+<tr>
+<th>数据</th>
+<th>用途</th>
+<th>是否跟随状态变化</th>
+<th>普通用户是否可见</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>feedback_internal_note</code></td>
+<td>管理员协作、排查记录</td>
+<td>不要求改变状态</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>feedback_status_audit</code></td>
+<td>记录 from&#x2F;to、操作人、原因、时间</td>
+<td>每次成功流转都写</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<p>状态更新和审计写入放在同一个事务中：状态改成功但审计失败时整体回滚，避免出现“状态变了却没有操作记录”的半成功状态。</p>
+<p>当前后台详情返回内部备注，但<strong>还没有提供状态审计列表接口</strong>；审计数据已经完整落库，可在后续管理页面增加时间线展示。</p>
+<h4 id="难点7：数据库迁移与本地可验收环境"><a href="#难点7：数据库迁移与本地可验收环境" class="headerlink" title="难点7：数据库迁移与本地可验收环境"></a>难点7：数据库迁移与本地可验收环境</h4><p>本轮迁移新增：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">users.role                     // USER / ADMIN / SUPER_ADMIN</span><br><span class="line">feedback.version               // 乐观锁版本</span><br><span class="line">feedback_internal_note         // 管理员内部备注</span><br><span class="line">feedback_status_audit          // 状态变化审计</span><br></pre></td></tr></table></figure>
+
+<p>同时修复了全量初始化脚本的 MySQL 8.4 兼容问题：移除不兼容的 <code>ADD COLUMN IF NOT EXISTS</code>、移除存在外键引用时不安全的 <code>TRUNCATE product</code>、移除依赖不存在用户的演示通知数据。</p>
+<p>配置层把数据库和 MinIO 凭据改为环境变量，避免继续把真实密码提交到仓库。本地 MySQL 只监听 <code>127.0.0.1</code>；MinIO 也只绑定本机端口用于接口验收。</p>
+<h3 id="3-3-接口与验收结果"><a href="#3-3-接口与验收结果" class="headerlink" title="3.3 接口与验收结果"></a>3.3 接口与验收结果</h3><p><strong>后台媒体接口</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>POST</td>
+<td><code>/api/admin/media/upload</code></td>
+<td>上传 JPEG &#x2F; PNG &#x2F; WebP</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/admin/media/url</code></td>
+<td>根据 objectKey 生成预签名 URL</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/admin/media</code></td>
+<td>删除未被业务引用的对象</td>
+</tr>
+</tbody></table>
+<p><strong>反馈后台接口</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td><code>/api/admin/feedback</code></td>
+<td>按状态、类型、关键词分页查询</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/admin/feedback/{id}</code></td>
+<td>查询详情和内部备注</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/api/admin/feedback/{id}/status</code></td>
+<td>带 version 和 reason 更新状态</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/admin/feedback/{id}/notes</code></td>
+<td>新增内部备注</td>
+</tr>
+</tbody></table>
+<p>本轮自动化测试结果：<strong>73 项通过，0 失败，0 错误</strong>。</p>
+<p>端到端验收覆盖：</p>
+<ul>
+<li>普通用户访问后台接口返回 403，管理员访问成功</li>
+<li>创建反馈后完成 <code>PENDING → PROCESSING → RESOLVED → PROCESSING</code></li>
+<li>使用旧 version 更新返回 409，状态和版本没有被覆盖</li>
+<li>内部备注成功落库，并使反馈版本递增</li>
+<li>三次状态流转均写入 <code>feedback_status_audit</code></li>
+<li>PNG 上传后通过预签名 URL 下载，源文件与下载文件 SHA256 完全一致</li>
+<li>文本伪装成 <code>.png</code> 返回 400</li>
+<li>未绑定媒体删除成功，原预签名 URL 随后返回 404</li>
+</ul>
+<h3 id="3-4-设计边界与优化方向"><a href="#3-4-设计边界与优化方向" class="headerlink" title="3.4 设计边界与优化方向"></a>3.4 设计边界与优化方向</h3><ol>
+<li><strong>引用扫描是显式清单</strong>：新增业务表或媒体字段时，必须同步更新 <code>MediaReferenceService</code>，否则保护范围不会自动扩展。长期可以引入统一媒体资产表和引用关系表。</li>
+<li><strong>逗号分隔字段限制查询能力</strong>：当前使用 <code>FIND_IN_SET</code> 兼容历史字段，数据量大后索引难以生效。更规范的做法是媒体附件关联表，一行表示一条业务引用。</li>
+<li><strong>角色模型仍较粗</strong>：目前只有 USER &#x2F; ADMIN &#x2F; SUPER_ADMIN，后续可拆成媒体管理、反馈处理、商品管理等细粒度权限，并统一接入 Spring Security。</li>
+<li><strong>每次请求都会查询角色</strong>：实时性高，但增加数据库访问；可以在保证角色变更及时失效的前提下做短时缓存。</li>
+<li><strong>审计暂未对外查询</strong>：状态审计已落库，但后台详情只返回内部备注；后续可增加审计时间线接口。</li>
+<li><strong>后台页面尚未接入</strong>：本轮完成 API 和数据库闭环，仍需团队统一 <code>admin-web</code> 和后台登录基座完成页面联调。</li>
+<li><strong>MinIO 仅作为本地验收环境</strong>：社区版已经归档且不再提供预编译二进制，当前本机构建适合开发验收；生产部署应评估持续维护和商业支持方案。</li>
+</ol>
+<hr>
+<h2 id="四、面试高频追问（更新版）"><a href="#四、面试高频追问（更新版）" class="headerlink" title="四、面试高频追问（更新版）"></a>四、面试高频追问（更新版）</h2><table>
 <thead>
 <tr>
 <th>问题</th>
@@ -467,9 +707,37 @@
 <td>读取侧换链走了归属校验吗？</td>
 <td>❌ 没走。DiagnosisService 的 regenerateImageUrls 和 AbnormalObservationService 的 regenerateUrl 都直接调 MinioUtil，绕过了 MediaService 的 requireOwned；异常观察接口还需补充 petId&#x2F;记录的用户归属校验。后续应收口为统一 URL 解析能力</td>
 </tr>
+<tr>
+<td>后台菜单只让管理员看见，为什么还要后端鉴权？</td>
+<td>前端隐藏只改善界面，不能阻止用户直接构造 HTTP 请求。后台接口必须根据服务端登录态和数据库角色做授权，未登录返回 401，已登录但无权限返回 403。</td>
+</tr>
+<tr>
+<td>为什么后台上传又增加魔数识别？</td>
+<td>扩展名和请求 MIME 都由客户端提供，可以伪造。魔数来自文件真实字节；再与扩展名交叉校验，才能拒绝文本改名 PNG、PNG 改名 JPG 等伪装。</td>
+</tr>
+<tr>
+<td>乐观锁为什么既在 Java 比版本，又在 SQL 里带 version？</td>
+<td>Java 预检用于尽早给出友好错误；真正消除竞态的是 <code>WHERE id = ? AND version = ?</code> 的条件更新。否则两次请求都通过 Java 检查后仍可能互相覆盖。</td>
+</tr>
+<tr>
+<td>为什么不用 synchronized 解决管理员并发？</td>
+<td>synchronized 只对单 JVM 有效，多实例部署后无法互斥。数据库条件更新跨实例生效，而且反馈冲突频率低，乐观锁比长期持有悲观锁更合适。</td>
+</tr>
+<tr>
+<td>添加内部备注为什么也要 version + 1？</td>
+<td>备注会改变反馈详情的协作上下文。版本递增能让其他管理员知道页面已经过期，避免忽略刚新增的排查结论继续提交状态。</td>
+</tr>
+<tr>
+<td>状态审计和内部备注为什么分表？</td>
+<td>备注是自由协作信息；审计必须结构化记录 from&#x2F;to、操作人、原因和时间。两者生命周期和查询用途不同，分表能保证审计语义稳定。</td>
+</tr>
+<tr>
+<td>媒体为什么不能直接删除？</td>
+<td>objectKey 可能被商品、订单快照、社区、诊断等业务引用。删除前先扫描引用，存在引用返回 409；请求合法，但资源当前状态与删除操作冲突。</td>
+</tr>
 </tbody></table>
 <hr>
-<h2 id="四、设计模式与架构思想总结"><a href="#四、设计模式与架构思想总结" class="headerlink" title="四、设计模式与架构思想总结"></a>四、设计模式与架构思想总结</h2><table>
+<h2 id="五、设计模式与架构思想总结"><a href="#五、设计模式与架构思想总结" class="headerlink" title="五、设计模式与架构思想总结"></a>五、设计模式与架构思想总结</h2><table>
 <thead>
 <tr>
 <th>模式&#x2F;思想</th>
@@ -493,12 +761,28 @@
 <td>objectKey 第二段 userId 与认证用户比对，防水平越权</td>
 </tr>
 <tr>
+<td>RBAC</td>
+<td>后台接口根据 users.role 判断 ADMIN &#x2F; SUPER_ADMIN，不能依赖前端隐藏菜单</td>
+</tr>
+<tr>
 <td>存用分离</td>
 <td>objectKey 入库（永久）+ URL 动态生成（临时）</td>
 </tr>
 <tr>
 <td>状态机守卫</td>
-<td>重试接口的 FAILED&#x2F;FALLBACK&#x2F;SUCCESS 三态判断</td>
+<td>诊断重试的 FAILED&#x2F;FALLBACK&#x2F;SUCCESS 判断；反馈的 PENDING&#x2F;PROCESSING&#x2F;RESOLVED 流转约束</td>
+</tr>
+<tr>
+<td>乐观并发控制</td>
+<td>feedback.version + 条件更新，防止多管理员静默覆盖</td>
+</tr>
+<tr>
+<td>事务一致性</td>
+<td>反馈状态更新和状态审计同事务提交，避免半成功</td>
+</tr>
+<tr>
+<td>引用完整性保护</td>
+<td>删除媒体前扫描业务引用，存在引用返回 409</td>
 </tr>
 <tr>
 <td>幂等设计</td>
@@ -506,15 +790,16 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="五、一句话总结"><a href="#五、一句话总结" class="headerlink" title="五、一句话总结"></a>五、一句话总结</h2><blockquote>
-<p><strong>交付边界</strong>：以上总结的是已经完成的能力，不代表 V3.0 全部媒体场景已经闭环；当前仍需补齐普通诊断详情按 objectKey 换链、读取侧归属校验，以及反馈、社区、商品图片接入。</p>
+<h2 id="六、一句话总结"><a href="#六、一句话总结" class="headerlink" title="六、一句话总结"></a>六、一句话总结</h2><blockquote>
+<p><strong>交付边界</strong>：以上总结的是三轮已经完成的后端能力，不代表所有前后台场景均已闭环；当前仍需补齐普通诊断详情按 objectKey 换链、读取侧归属校验、统一媒体引用模型，以及团队 <code>admin-web</code> 和后台登录基座的页面联调。</p>
 </blockquote>
 <blockquote>
 <p><strong>第一轮做诊断结果的持久化与失败恢复</strong>：诊断提交时把最终报告、YOLO 模型版本、规则版本、结构化 YOLO 检测结果、LLM 执行状态和 MinIO objectKey 固化到 diagnosis_tasks。历史详情直接读取已落库的报告结果，不会在查询时重新调用模型、规则或 LLM，从而避免历史展示随服务升级而漂移。对于 LLM 的失败或降级结果，增加了带用户归属和状态守卫的重试入口：复用历史输入、YOLO 快照和 objectKey，重新生成临时图片 URL 后重试 LLM；成功记录不允许重试，避免覆盖用户已确认的结论。复查关联字段已经完成建模和透传，为后续”发起复查”功能预留。</p>
 <p><strong>第二轮做图片资源的统一治理</strong>：将主要的上传、访问和删除能力收敛到 MediaService，统一 objectKey 命名、文件大小和扩展名校验、场景名约束、认证用户校验及对象归属校验。业务表持久化 objectKey，展示时动态换取 7 天有效的预签名 URL；这样 URL 过期不影响历史资源引用。旧的上传接口保留原返回格式并委托新服务，避免头像和宠物照片等现有调用方改造。最后，把该能力完整接入异常观察：前端支持最多 9 张图片的选择、预览和编辑回填，后端存 objectKey、读时生成展示 URL</p>
+<p><strong>第三轮做后台媒体与反馈处理闭环</strong>：后台接口复用现有登录态并根据数据库角色做服务端授权；媒体上传增加 JPEG&#x2F;PNG&#x2F;WebP 魔数识别和扩展名一致性校验，删除前扫描商品、订单、社区、诊断等业务引用。反馈后台支持分页筛选、详情、内部备注和受控状态流转，通过 version 条件更新解决多管理员并发覆盖，并在同一事务中记录状态审计。自动化测试 73 项全部通过，端到端验证了 403 权限隔离、409 版本冲突、图片哈希一致性、伪装文件拒绝和对象真实删除。</p>
 </blockquote>
 <hr>
-<h2 id="六、术语备注"><a href="#六、术语备注" class="headerlink" title="六、术语备注"></a>六、术语备注</h2><table>
+<h2 id="七、术语备注"><a href="#七、术语备注" class="headerlink" title="七、术语备注"></a>七、术语备注</h2><table>
 <thead>
 <tr>
 <th>术语</th>
@@ -583,6 +868,41 @@
 <td>只有 <code>FAILED</code> 或 <code>FALLBACK</code> 诊断允许重试</td>
 </tr>
 <tr>
+<td>RBAC</td>
+<td>根据用户角色决定能否执行一类操作</td>
+<td>只有 <code>ADMIN</code> &#x2F; <code>SUPER_ADMIN</code> 能访问后台接口</td>
+</tr>
+<tr>
+<td>乐观锁</td>
+<td>不先锁住数据，提交时检查版本是否仍一致</td>
+<td>更新反馈时同时匹配 id 和 version，旧版本返回 409</td>
+</tr>
+<tr>
+<td>条件更新</td>
+<td>只有 WHERE 条件仍满足时才执行更新</td>
+<td><code>WHERE id = ? AND version = ?</code> 防止并发覆盖</td>
+</tr>
+<tr>
+<td>状态审计</td>
+<td>结构化记录状态从哪里变到哪里、由谁操作、为什么</td>
+<td><code>feedback_status_audit</code> 保存 from&#x2F;to、管理员、原因和时间</td>
+</tr>
+<tr>
+<td>内部备注</td>
+<td>仅供后台协作使用、不展示给普通用户的说明</td>
+<td>管理员记录复现过程、日志补充和处理结论</td>
+</tr>
+<tr>
+<td>魔数</td>
+<td>文件开头用于识别真实格式的固定字节特征</td>
+<td>PNG 以 <code>89 50 4E 47 0D 0A 1A 0A</code> 开头</td>
+</tr>
+<tr>
+<td>业务引用保护</td>
+<td>删除共享资源前检查是否仍被业务数据使用</td>
+<td>商品或诊断仍引用 objectKey 时拒绝删除并返回 409</td>
+</tr>
+<tr>
 <td>幂等</td>
 <td>同一操作重复执行，最终状态保持一致</td>
 <td>同一文件重复删除后，最终都处于“不存在”状态</td>
@@ -608,4 +928,4 @@
 <td>图片上传成功、异常观察记录保存失败后留下的 MinIO 对象</td>
 </tr>
 </tbody></table>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mikaela07.github.io">Mikaela</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://mikaela07.github.io/2026/09/07/SmartScales%E5%BC%80%E5%8F%91%E4%B8%AA%E4%BA%BA%E8%B4%9F%E8%B4%A3%E9%83%A8%E5%88%86%E6%95%B4%E7%90%86/">https://mikaela07.github.io/2026/09/07/SmartScales%E5%BC%80%E5%8F%91%E4%B8%AA%E4%BA%BA%E8%B4%9F%E8%B4%A3%E9%83%A8%E5%88%86%E6%95%B4%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://mikaela07.github.io" target="_blank">Mikaela</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a><a class="post-meta__tags" href="/tags/MinIO/">MinIO</a><a class="post-meta__tags" href="/tags/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8/">对象存储</a><a class="post-meta__tags" href="/tags/%E5%BF%AB%E7%85%A7%E8%AE%BE%E8%AE%A1/">快照设计</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/08/20/MySQL%E6%80%BB%E7%BB%93/" title="MySQL总结"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">MySQL总结</div></div><div class="info-2"><div class="info-item-1">MySQL 知识点整理一、两种执行 SQL 的方式1. 进入 MySQL 交互1mysql -u root -p   出现 mysql&gt; 提示符，在里面写 SQL 退出：exit;  2. 终端直接执行（不进入交互）1mysql -u root -p -e &#x27;SQL语句;&#x27;   -e：执行引号内的 SQL，执行完直接回终端 指定数据库用 -D：  1mysql -u root -p -D youkedadb -e &#x27;SHOW TABLES;&#x27;   二、数据库操作1234CREATE DATABASE youkedadb;   -- 创建数据库SHOW DATABASES;              -- 查看所有数据库（带S）USE youkedadb;               -- 选中/切换数据库DROP DATABASE youkedadb;     -- 删除数据库（不可逆）   提示：必须先 USE 库名（或用 -D 指定），建表才会建在这个库里。   三、建表 CREATE TABLE12345678CREATE TA...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Mikaela</div><div class="author-info-description">不知道写啥hhh</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Mikaela07"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Mikaela07" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SmartScales-%E5%BC%80%E5%8F%91%E4%B8%AA%E4%BA%BA%E8%B4%9F%E8%B4%A3%E9%83%A8%E5%88%86%E6%95%B4%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">SmartScales 开发个人负责部分整理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%AC%AC%E4%B8%80%E8%BD%AE%EF%BC%9A%E8%AF%8A%E6%96%AD%E8%AF%84%E4%BC%B0%E5%BF%AB%E7%85%A7%E4%B8%8E%E9%87%8D%E8%AF%95%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">一、第一轮：诊断评估快照与重试接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BB%BB%E5%8A%A1%E8%8C%83%E5%9B%B4"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1 任务范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%8A%80%E6%9C%AF%E9%9A%BE%E7%82%B9"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.2 技术难点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B91%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%BF%AB%E7%85%A7%E2%80%94%E2%80%94%E6%A8%A1%E5%9E%8B-%E8%A7%84%E5%88%99%E4%BC%9A%E8%BF%AD%E4%BB%A3"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">难点1：为什么需要快照——模型&#x2F;规则会迭代</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B92%EF%BC%9A%E4%B8%83%E4%B8%AA%E5%AD%97%E6%AE%B5%E5%90%84%E8%87%AA%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">难点2：七个字段各自解决什么问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B93%EF%BC%9AMinioUtil-%E6%94%B9%E9%80%A0%E2%80%94%E2%80%94%E4%BB%8E-URL-%E5%88%B0-objectKey"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">难点3：MinioUtil 改造——从 URL 到 objectKey</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B94%EF%BC%9A%E9%87%8D%E8%AF%95%E6%8E%A5%E5%8F%A3%E7%9A%84%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-number">1.1.2.4.</span> <span class="toc-text">难点4：重试接口的状态机</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E8%AE%BE%E8%AE%A1%E8%BE%B9%E7%95%8C%E4%B8%8E%E7%8E%B0%E7%8A%B6"><span class="toc-number">1.1.3.</span> <span class="toc-text">1.3 设计边界与现状</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E9%9D%A2%E8%AF%95%E5%8A%A0%E5%88%86%EF%BC%9A%E4%B8%BB%E5%8A%A8%E8%AF%B4%E5%87%BA%E7%9A%84%E4%BC%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="toc-number">1.1.4.</span> <span class="toc-text">1.4 面试加分：主动说出的优化方向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%AC%AC%E4%BA%8C%E8%BD%AE%EF%BC%9A%E7%BB%9F%E4%B8%80-MinIO-%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.2.</span> <span class="toc-text">二、第二轮：统一 MinIO 媒体服务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E4%BB%BB%E5%8A%A1%E8%8C%83%E5%9B%B4"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 任务范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%8A%80%E6%9C%AF%E9%9A%BE%E7%82%B9"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 技术难点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B91%EF%BC%9A%E6%94%B6%E6%95%9B%E5%89%8D%E7%9A%84%E6%95%A3%E8%90%BD%E7%8E%B0%E7%8A%B6"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">难点1：收敛前的散落现状</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B92%EF%BC%9AMediaService-%E7%BB%9F%E4%B8%80%E5%85%A5%E5%8F%A3%E2%80%94%E2%80%94%E5%9B%9B%E4%B8%AA%E6%96%B9%E6%B3%95%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">难点2：MediaService 统一入口——四个方法的设计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B93%EF%BC%9A%E5%AE%89%E5%85%A8%E6%A0%A1%E9%AA%8C%E2%80%94%E2%80%94%E8%BE%93%E5%85%A5%E6%A0%A1%E9%AA%8C%E4%B8%8E%E6%8E%88%E6%9D%83%E6%A0%A1%E9%AA%8C%E4%B8%A4%E5%B1%82%E5%88%86%E7%A6%BB"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">难点3：安全校验——输入校验与授权校验两层分离</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B94%EF%BC%9AobjectKey-%E5%BD%92%E5%B1%9E%E6%A0%A1%E9%AA%8C%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E8%B5%84%E6%BA%90%E6%89%80%E6%9C%89%E8%80%85%E7%9A%84%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">难点4：objectKey 归属校验——基于资源所有者的访问控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B95%EF%BC%9AobjectKey-%E5%85%A5%E5%BA%93-URL-%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E2%80%94%E2%80%94%E5%AD%98%E7%94%A8%E5%88%86%E7%A6%BB"><span class="toc-number">1.2.2.5.</span> <span class="toc-text">难点5：objectKey 入库 + URL 动态生成——存用分离</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B96%EF%BC%9A%E5%B9%82%E7%AD%89%E5%88%A0%E9%99%A4"><span class="toc-number">1.2.2.6.</span> <span class="toc-text">难点6：幂等删除</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B97%EF%BC%9AUploadController-%E5%A7%94%E6%89%98%E2%80%94%E2%80%94%E9%97%A8%E9%9D%A2%E6%A8%A1%E5%BC%8F%E4%BF%9D%E5%85%BC%E5%AE%B9"><span class="toc-number">1.2.2.7.</span> <span class="toc-text">难点7：UploadController 委托——门面模式保兼容</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B98%EF%BC%9A%E5%BC%82%E5%B8%B8%E8%A7%82%E5%AF%9F%E5%9B%BE%E7%89%87%E9%99%84%E4%BB%B6%E2%80%94%E2%80%94%E5%89%8D%E5%90%8E%E7%AB%AF%E5%8D%8F%E4%BD%9C%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.2.8.</span> <span class="toc-text">难点8：异常观察图片附件——前后端协作设计</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E9%9D%A2%E8%AF%95%E5%8A%A0%E5%88%86%EF%BC%9A%E4%B8%BB%E5%8A%A8%E8%AF%B4%E5%87%BA%E7%9A%84%E4%BC%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 面试加分：主动说出的优化方向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-V3-0-Sprint-%E4%BA%A4%E4%BB%98%E8%8C%83%E5%9B%B4%E4%B8%8E%E6%9C%AA%E5%AE%8C%E6%88%90%E6%8E%A5%E5%85%A5"><span class="toc-number">1.2.4.</span> <span class="toc-text">2.4 V3.0 Sprint 交付范围与未完成接入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%9D%A2%E8%AF%95%E9%AB%98%E9%A2%91%E8%BF%BD%E9%97%AE%EF%BC%88%E6%9B%B4%E6%96%B0%E7%89%88%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">三、面试高频追问（更新版）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%8E%E6%9E%B6%E6%9E%84%E6%80%9D%E6%83%B3%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">四、设计模式与架构思想总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">五、一句话总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%9C%AF%E8%AF%AD%E5%A4%87%E6%B3%A8"><span class="toc-number">1.6.</span> <span class="toc-text">六、术语备注</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/07/SmartScales%E5%BC%80%E5%8F%91%E4%B8%AA%E4%BA%BA%E8%B4%9F%E8%B4%A3%E9%83%A8%E5%88%86%E6%95%B4%E7%90%86/" title="SmartScales 开发个人负责部分整理">SmartScales 开发个人负责部分整理</a><time datetime="2026-09-06T16:00:00.000Z" title="发表于 2026-09-07 00:00:00">2026-09-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/20/MySQL%E6%80%BB%E7%BB%93/" title="MySQL总结">MySQL总结</a><time datetime="2026-08-19T16:00:00.000Z" title="发表于 2026-08-20 00:00:00">2026-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/Spring%20Web%E5%85%A8%E6%A0%88%E6%80%BB%E7%BB%93/" title="Spring Web全栈总结">Spring Web全栈总结</a><time datetime="2026-07-22T16:00:00.000Z" title="发表于 2026-07-23 00:00:00">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/11/JS%E6%80%BB%E7%BB%93/" title="JS总结">JS总结</a><time datetime="2026-06-10T16:00:00.000Z" title="发表于 2026-06-11 00:00:00">2026-06-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/07/CTFshow%20vip%E9%A2%98%E7%9B%AE%E9%99%90%E5%85%8Dwp%EF%BC%88%E6%B3%84%E9%9C%B2%EF%BC%89/" title="CTFshow vip题目限免wp（泄露）">CTFshow vip题目限免wp（泄露）</a><time datetime="2026-06-06T16:00:00.000Z" title="发表于 2026-06-07 00:00:00">2026-06-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Mikaela</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mikaela07.github.io">Mikaela</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://mikaela07.github.io/2026/09/07/SmartScales%E5%BC%80%E5%8F%91%E4%B8%AA%E4%BA%BA%E8%B4%9F%E8%B4%A3%E9%83%A8%E5%88%86%E6%95%B4%E7%90%86/">https://mikaela07.github.io/2026/09/07/SmartScales%E5%BC%80%E5%8F%91%E4%B8%AA%E4%BA%BA%E8%B4%9F%E8%B4%A3%E9%83%A8%E5%88%86%E6%95%B4%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://mikaela07.github.io" target="_blank">Mikaela</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Spring-Boot/">Spring Boot</a><a class="post-meta__tags" href="/tags/MinIO/">MinIO</a><a class="post-meta__tags" href="/tags/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8/">对象存储</a><a class="post-meta__tags" href="/tags/%E5%BF%AB%E7%85%A7%E8%AE%BE%E8%AE%A1/">快照设计</a><a class="post-meta__tags" href="/tags/RBAC/">RBAC</a><a class="post-meta__tags" href="/tags/%E4%B9%90%E8%A7%82%E9%94%81/">乐观锁</a><a class="post-meta__tags" href="/tags/%E7%8A%B6%E6%80%81%E6%9C%BA/">状态机</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/08/20/MySQL%E6%80%BB%E7%BB%93/" title="MySQL总结"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">MySQL总结</div></div><div class="info-2"><div class="info-item-1">MySQL 知识点整理一、两种执行 SQL 的方式1. 进入 MySQL 交互1mysql -u root -p   出现 mysql&gt; 提示符，在里面写 SQL 退出：exit;  2. 终端直接执行（不进入交互）1mysql -u root -p -e &#x27;SQL语句;&#x27;   -e：执行引号内的 SQL，执行完直接回终端 指定数据库用 -D：  1mysql -u root -p -D youkedadb -e &#x27;SHOW TABLES;&#x27;   二、数据库操作1234CREATE DATABASE youkedadb;   -- 创建数据库SHOW DATABASES;              -- 查看所有数据库（带S）USE youkedadb;               -- 选中/切换数据库DROP DATABASE youkedadb;     -- 删除数据库（不可逆）   提示：必须先 USE 库名（或用 -D 指定），建表才会建在这个库里。   三、建表 CREATE TABLE12345678CREATE TA...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Mikaela</div><div class="author-info-description">不知道写啥hhh</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Mikaela07"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Mikaela07" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SmartScales-%E5%BC%80%E5%8F%91%E4%B8%AA%E4%BA%BA%E8%B4%9F%E8%B4%A3%E9%83%A8%E5%88%86%E6%95%B4%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">SmartScales 开发个人负责部分整理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%AC%AC%E4%B8%80%E8%BD%AE%EF%BC%9A%E8%AF%8A%E6%96%AD%E8%AF%84%E4%BC%B0%E5%BF%AB%E7%85%A7%E4%B8%8E%E9%87%8D%E8%AF%95%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">一、第一轮：诊断评估快照与重试接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%BB%BB%E5%8A%A1%E8%8C%83%E5%9B%B4"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1 任务范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%8A%80%E6%9C%AF%E9%9A%BE%E7%82%B9"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.2 技术难点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B91%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%BF%AB%E7%85%A7%E2%80%94%E2%80%94%E6%A8%A1%E5%9E%8B-%E8%A7%84%E5%88%99%E4%BC%9A%E8%BF%AD%E4%BB%A3"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">难点1：为什么需要快照——模型&#x2F;规则会迭代</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B92%EF%BC%9A%E4%B8%83%E4%B8%AA%E5%AD%97%E6%AE%B5%E5%90%84%E8%87%AA%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">难点2：七个字段各自解决什么问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B93%EF%BC%9AMinioUtil-%E6%94%B9%E9%80%A0%E2%80%94%E2%80%94%E4%BB%8E-URL-%E5%88%B0-objectKey"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">难点3：MinioUtil 改造——从 URL 到 objectKey</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B94%EF%BC%9A%E9%87%8D%E8%AF%95%E6%8E%A5%E5%8F%A3%E7%9A%84%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-number">1.1.2.4.</span> <span class="toc-text">难点4：重试接口的状态机</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E8%AE%BE%E8%AE%A1%E8%BE%B9%E7%95%8C%E4%B8%8E%E7%8E%B0%E7%8A%B6"><span class="toc-number">1.1.3.</span> <span class="toc-text">1.3 设计边界与现状</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E9%9D%A2%E8%AF%95%E5%8A%A0%E5%88%86%EF%BC%9A%E4%B8%BB%E5%8A%A8%E8%AF%B4%E5%87%BA%E7%9A%84%E4%BC%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="toc-number">1.1.4.</span> <span class="toc-text">1.4 面试加分：主动说出的优化方向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%AC%AC%E4%BA%8C%E8%BD%AE%EF%BC%9A%E7%BB%9F%E4%B8%80-MinIO-%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.2.</span> <span class="toc-text">二、第二轮：统一 MinIO 媒体服务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E4%BB%BB%E5%8A%A1%E8%8C%83%E5%9B%B4"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 任务范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%8A%80%E6%9C%AF%E9%9A%BE%E7%82%B9"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 技术难点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B91%EF%BC%9A%E6%94%B6%E6%95%9B%E5%89%8D%E7%9A%84%E6%95%A3%E8%90%BD%E7%8E%B0%E7%8A%B6"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">难点1：收敛前的散落现状</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B92%EF%BC%9AMediaService-%E7%BB%9F%E4%B8%80%E5%85%A5%E5%8F%A3%E2%80%94%E2%80%94%E5%9B%9B%E4%B8%AA%E6%96%B9%E6%B3%95%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">难点2：MediaService 统一入口——四个方法的设计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B93%EF%BC%9A%E5%AE%89%E5%85%A8%E6%A0%A1%E9%AA%8C%E2%80%94%E2%80%94%E8%BE%93%E5%85%A5%E6%A0%A1%E9%AA%8C%E4%B8%8E%E6%8E%88%E6%9D%83%E6%A0%A1%E9%AA%8C%E4%B8%A4%E5%B1%82%E5%88%86%E7%A6%BB"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">难点3：安全校验——输入校验与授权校验两层分离</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B94%EF%BC%9AobjectKey-%E5%BD%92%E5%B1%9E%E6%A0%A1%E9%AA%8C%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E8%B5%84%E6%BA%90%E6%89%80%E6%9C%89%E8%80%85%E7%9A%84%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">难点4：objectKey 归属校验——基于资源所有者的访问控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B95%EF%BC%9AobjectKey-%E5%85%A5%E5%BA%93-URL-%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E2%80%94%E2%80%94%E5%AD%98%E7%94%A8%E5%88%86%E7%A6%BB"><span class="toc-number">1.2.2.5.</span> <span class="toc-text">难点5：objectKey 入库 + URL 动态生成——存用分离</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B96%EF%BC%9A%E5%B9%82%E7%AD%89%E5%88%A0%E9%99%A4"><span class="toc-number">1.2.2.6.</span> <span class="toc-text">难点6：幂等删除</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B97%EF%BC%9AUploadController-%E5%A7%94%E6%89%98%E2%80%94%E2%80%94%E9%97%A8%E9%9D%A2%E6%A8%A1%E5%BC%8F%E4%BF%9D%E5%85%BC%E5%AE%B9"><span class="toc-number">1.2.2.7.</span> <span class="toc-text">难点7：UploadController 委托——门面模式保兼容</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B98%EF%BC%9A%E5%BC%82%E5%B8%B8%E8%A7%82%E5%AF%9F%E5%9B%BE%E7%89%87%E9%99%84%E4%BB%B6%E2%80%94%E2%80%94%E5%89%8D%E5%90%8E%E7%AB%AF%E5%8D%8F%E4%BD%9C%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.2.8.</span> <span class="toc-text">难点8：异常观察图片附件——前后端协作设计</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E9%9D%A2%E8%AF%95%E5%8A%A0%E5%88%86%EF%BC%9A%E4%B8%BB%E5%8A%A8%E8%AF%B4%E5%87%BA%E7%9A%84%E4%BC%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 面试加分：主动说出的优化方向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-V3-0-Sprint-%E4%BA%A4%E4%BB%98%E8%8C%83%E5%9B%B4%E4%B8%8E%E6%9C%AA%E5%AE%8C%E6%88%90%E6%8E%A5%E5%85%A5"><span class="toc-number">1.2.4.</span> <span class="toc-text">2.4 V3.0 Sprint 交付范围与未完成接入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%AC%AC%E4%B8%89%E8%BD%AE%EF%BC%9A%E5%90%8E%E5%8F%B0%E5%AA%92%E4%BD%93%E4%B8%8E%E5%8F%8D%E9%A6%88%E5%A4%84%E7%90%86%E9%97%AD%E7%8E%AF"><span class="toc-number">1.3.</span> <span class="toc-text">三、第三轮：后台媒体与反馈处理闭环</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BB%BB%E5%8A%A1%E8%8C%83%E5%9B%B4"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 任务范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%8A%80%E6%9C%AF%E9%9A%BE%E7%82%B9"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 技术难点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B91%EF%BC%9A%E5%90%8E%E5%8F%B0%E6%9D%83%E9%99%90%E4%B8%8D%E8%83%BD%E5%8F%AA%E9%9D%A0%E2%80%9C%E5%89%8D%E7%AB%AF%E9%9A%90%E8%97%8F%E6%8C%89%E9%92%AE%E2%80%9D"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">难点1：后台权限不能只靠“前端隐藏按钮”</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B92%EF%BC%9A%E5%9B%BE%E7%89%87%E6%A0%A1%E9%AA%8C%E4%BB%8E%E6%89%A9%E5%B1%95%E5%90%8D%E5%8D%87%E7%BA%A7%E4%B8%BA%E9%AD%94%E6%95%B0%E8%AF%86%E5%88%AB"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">难点2：图片校验从扩展名升级为魔数识别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B93%EF%BC%9A%E5%88%A0%E9%99%A4%E5%89%8D%E5%81%9A%E4%B8%9A%E5%8A%A1%E5%BC%95%E7%94%A8%E4%BF%9D%E6%8A%A4"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">难点3：删除前做业务引用保护</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B94%EF%BC%9A%E5%8F%8D%E9%A6%88%E5%A4%84%E7%90%86%E4%B8%8D%E6%98%AF%E4%BB%BB%E6%84%8F%E6%94%B9%E7%8A%B6%E6%80%81%EF%BC%8C%E8%80%8C%E6%98%AF%E6%98%BE%E5%BC%8F%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">难点4：反馈处理不是任意改状态，而是显式状态机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B95%EF%BC%9A%E4%B9%90%E8%A7%82%E9%94%81%E9%98%B2%E6%AD%A2%E5%A4%9A%E7%AE%A1%E7%90%86%E5%91%98%E4%BA%92%E7%9B%B8%E8%A6%86%E7%9B%96"><span class="toc-number">1.3.2.5.</span> <span class="toc-text">难点5：乐观锁防止多管理员互相覆盖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B96%EF%BC%9A%E5%86%85%E9%83%A8%E5%A4%87%E6%B3%A8%E4%B8%8E%E7%8A%B6%E6%80%81%E5%AE%A1%E8%AE%A1%E5%88%86%E8%A1%A8"><span class="toc-number">1.3.2.6.</span> <span class="toc-text">难点6：内部备注与状态审计分表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%BE%E7%82%B97%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%81%E7%A7%BB%E4%B8%8E%E6%9C%AC%E5%9C%B0%E5%8F%AF%E9%AA%8C%E6%94%B6%E7%8E%AF%E5%A2%83"><span class="toc-number">1.3.2.7.</span> <span class="toc-text">难点7：数据库迁移与本地可验收环境</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%8E%A5%E5%8F%A3%E4%B8%8E%E9%AA%8C%E6%94%B6%E7%BB%93%E6%9E%9C"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 接口与验收结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E8%AE%BE%E8%AE%A1%E8%BE%B9%E7%95%8C%E4%B8%8E%E4%BC%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="toc-number">1.3.4.</span> <span class="toc-text">3.4 设计边界与优化方向</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E9%9D%A2%E8%AF%95%E9%AB%98%E9%A2%91%E8%BF%BD%E9%97%AE%EF%BC%88%E6%9B%B4%E6%96%B0%E7%89%88%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">四、面试高频追问（更新版）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%8E%E6%9E%B6%E6%9E%84%E6%80%9D%E6%83%B3%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">五、设计模式与架构思想总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">六、一句话总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%9C%AF%E8%AF%AD%E5%A4%87%E6%B3%A8"><span class="toc-number">1.7.</span> <span class="toc-text">七、术语备注</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/07/SmartScales%E5%BC%80%E5%8F%91%E4%B8%AA%E4%BA%BA%E8%B4%9F%E8%B4%A3%E9%83%A8%E5%88%86%E6%95%B4%E7%90%86/" title="SmartScales 开发个人负责部分整理">SmartScales 开发个人负责部分整理</a><time datetime="2026-09-06T16:00:00.000Z" title="发表于 2026-09-07 00:00:00">2026-09-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/20/MySQL%E6%80%BB%E7%BB%93/" title="MySQL总结">MySQL总结</a><time datetime="2026-08-19T16:00:00.000Z" title="发表于 2026-08-20 00:00:00">2026-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/23/Spring%20Web%E5%85%A8%E6%A0%88%E6%80%BB%E7%BB%93/" title="Spring Web全栈总结">Spring Web全栈总结</a><time datetime="2026-07-22T16:00:00.000Z" title="发表于 2026-07-23 00:00:00">2026-07-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/11/JS%E6%80%BB%E7%BB%93/" title="JS总结">JS总结</a><time datetime="2026-06-10T16:00:00.000Z" title="发表于 2026-06-11 00:00:00">2026-06-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/07/CTFshow%20vip%E9%A2%98%E7%9B%AE%E9%99%90%E5%85%8Dwp%EF%BC%88%E6%B3%84%E9%9C%B2%EF%BC%89/" title="CTFshow vip题目限免wp（泄露）">CTFshow vip题目限免wp（泄露）</a><time datetime="2026-06-06T16:00:00.000Z" title="发表于 2026-06-07 00:00:00">2026-06-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Mikaela</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
